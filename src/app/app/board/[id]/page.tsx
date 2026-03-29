@@ -95,6 +95,8 @@ export default function BoardUpdatePage() {
   const [update, setUpdate] = useState<BoardUpdateDTO | null>(null)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
+  const [exportingPptx, setExportingPptx] = useState(false)
+  const [checkingOut, setCheckingOut] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -103,6 +105,10 @@ export default function BoardUpdatePage() {
         if (res.ok) {
           const data = await res.json()
           setUpdate(data)
+          // Persist to sessionStorage for post-checkout download
+          try {
+            sessionStorage.setItem(`boardbrief_report_${updateId}`, JSON.stringify(data))
+          } catch { /* storage might be unavailable */ }
         }
       } catch { /* ignore */ } finally { setLoading(false) }
     }
@@ -121,6 +127,45 @@ export default function BoardUpdatePage() {
       alert('PDF export failed — check the console for details')
     } finally {
       setExporting(false)
+    }
+  }
+
+  const handleExportPptx = async () => {
+    if (!update) return
+    setExportingPptx(true)
+    try {
+      const { generateBoardPptx } = await import('@/lib/export/board-pptx-generator')
+      const blob = await generateBoardPptx(update)
+      downloadBlob(blob, `${update.companyName.replace(/[^a-zA-Z0-9]+/g, '-')}-${update.period.replace(/\s+/g, '-')}-board-update.pptx`)
+    } catch (err) {
+      console.error('PPTX export failed:', err)
+      alert('PPTX export failed — check the console for details')
+    } finally {
+      setExportingPptx(false)
+    }
+  }
+
+  const handleCheckout = async () => {
+    if (!update) return
+    setCheckingOut(true)
+    try {
+      // Ensure data is in sessionStorage before leaving page
+      try {
+        sessionStorage.setItem(`boardbrief_report_${updateId}`, JSON.stringify(update))
+      } catch { /* ignore */ }
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reportId: updateId }),
+      })
+      if (!res.ok) throw new Error('Failed to create checkout session')
+      const { url } = await res.json()
+      window.location.href = url
+    } catch (err) {
+      console.error('Checkout failed:', err)
+      alert('Checkout failed — please try again')
+      setCheckingOut(false)
     }
   }
 
@@ -158,8 +203,11 @@ export default function BoardUpdatePage() {
           <Button variant="secondary" size="sm" onClick={() => router.push('/app/upload')}>
             New update
           </Button>
-          <Button size="sm" onClick={handleExportPdf} loading={exporting}>
-            Export PDF
+          <Button variant="secondary" size="sm" onClick={handleExportPdf} loading={exporting}>
+            Download PDF
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleExportPptx} loading={exportingPptx}>
+            Download PPTX
           </Button>
         </div>
       </div>
@@ -168,12 +216,14 @@ export default function BoardUpdatePage() {
       <div className="h-1 bg-[#1A1A18] mb-1" />
       <div className="h-px bg-[#1A1A18] mb-8" />
 
-      {/* Executive Summary */}
-      <div className="mb-10 bg-[#1A1A18] text-white rounded p-8">
-        <p className="text-[10px] font-bold text-[#C8102E] uppercase tracking-widest mb-3">Executive Summary</p>
-        <p className="font-[family-name:var(--font-heading)] text-xl leading-relaxed font-normal italic">
-          &ldquo;{update.executiveSummary}&rdquo;
-        </p>
+      {/* Executive Summary — preview with blur gate */}
+      <div className="mb-10 relative">
+        <div className="bg-[#1A1A18] text-white rounded p-8">
+          <p className="text-[10px] font-bold text-[#C8102E] uppercase tracking-widest mb-3">Executive Summary</p>
+          <p className="font-[family-name:var(--font-heading)] text-xl leading-relaxed font-normal italic">
+            &ldquo;{update.executiveSummary}&rdquo;
+          </p>
+        </div>
       </div>
 
       {/* Metrics grid — 3 columns newspaper-style */}
@@ -235,17 +285,46 @@ export default function BoardUpdatePage() {
       )}
 
       {/* Bottom export bar */}
-      <div className="mt-8 flex items-center justify-between py-6 border-t-2 border-[#1A1A18]">
-        <p className="font-[family-name:var(--font-data)] text-xs text-[#6B6456] uppercase tracking-wider">
-          BoardBrief — generated {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-        </p>
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" onClick={() => router.push('/app/upload')}>
-            New update
-          </Button>
-          <Button onClick={handleExportPdf} loading={exporting}>
-            Export PDF
-          </Button>
+      <div className="mt-8 border-t-2 border-[#1A1A18] pt-6">
+        {/* Pay-per-download CTA */}
+        <div className="bg-[#F4F1EB] border border-[#E5E0D5] rounded-lg p-6 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold text-[#C8102E] uppercase tracking-widest mb-1">Board Package</p>
+            <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold text-[#1A1A18] mb-1">
+              Download Board Update — PDF + PPTX
+            </h3>
+            <p className="text-sm text-[#6B6456]">
+              Broadsheet PDF for email · PPTX deck for board meetings · One-time payment
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-2 shrink-0">
+            <Button
+              onClick={handleCheckout}
+              loading={checkingOut}
+              className="whitespace-nowrap text-base px-6 py-3"
+            >
+              Download Board Update — £19
+            </Button>
+            <p className="text-[10px] text-[#6B6456] uppercase tracking-wider">Secure payment via Stripe</p>
+          </div>
+        </div>
+
+        {/* Free direct downloads */}
+        <div className="flex items-center justify-between">
+          <p className="font-[family-name:var(--font-data)] text-xs text-[#6B6456] uppercase tracking-wider">
+            BoardBrief — generated {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" onClick={() => router.push('/app/upload')}>
+              New update
+            </Button>
+            <Button variant="secondary" onClick={handleExportPdf} loading={exporting}>
+              PDF only
+            </Button>
+            <Button variant="secondary" onClick={handleExportPptx} loading={exportingPptx}>
+              PPTX only
+            </Button>
+          </div>
         </div>
       </div>
     </div>
