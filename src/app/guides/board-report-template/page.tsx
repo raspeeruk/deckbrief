@@ -1,232 +1,304 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Board Report Template for Startups: What to Include Every Month | DeckBrief',
-  description: 'A complete board report template for startups — executive summary, key metrics (MRR, ARR, burn rate, runway), highlights & lowlights, board asks, and appendix structure. Copy and adapt.',
-  openGraph: {
-    title: 'Board Report Template for Startups: What to Include Every Month',
-    description: 'A complete board report template covering executive summary, key metrics, highlights & lowlights, asks, and appendix structure.',
-    type: 'article',
-  },
+  title: 'Board Report Template: What to Include at Each Funding Stage',
+  description: 'A board report template covering all 7 sections VCs expect — with stage-by-stage format guidance, financial statement advice, and how to present bad news.',
+  keywords: ['board report template', 'board pack template', 'startup board pack'],
 }
+
+const sections = [
+  { num: '01', title: 'Executive summary', purpose: 'The one page that gets read before anything else. State the single most important thing that happened this period, then the decision or context you need directors to hold as they read the rest. Write this last — after you know what the data says.' },
+  { num: '02', title: 'Financial statements', purpose: 'P&L, cash position, burn rate, runway. Current period vs prior period vs budget. No commentary needed here — the narrative comes elsewhere. Just clean, correctly formatted numbers with the right comparators.' },
+  { num: '03', title: 'KPI dashboard', purpose: 'Your 5-8 core metrics in one view, with trend direction and period-over-period change. Use consistent formatting every month so directors can spot anomalies at a glance. Don\'t add new metrics without removing one — metric sprawl is a red flag.' },
+  { num: '04', title: 'Business highlights', purpose: '3-5 specific wins from this period. Not aspirational — things that actually happened. Closed a deal, shipped a feature, hired a key role, hit a milestone. Be concrete: "Closed HSBC at £85k ARR" not "Strong enterprise traction".' },
+  { num: '05', title: 'Challenges and risks', purpose: 'This section separates founders who build trust from founders who manage optics. 2-3 real problems, with your understanding of root cause and what you\'re doing about it. No investor expects a clean run — they expect honest reporting.' },
+  { num: '06', title: 'Strategic items / decisions needed', purpose: 'The agenda items for the board meeting itself. One memo per item: the question, the options you\'ve considered, your recommendation, and the specific input you need from directors. This is what makes meetings productive versus circular.' },
+  { num: '07', title: 'Asks', purpose: 'Specific, named requests. "I need an intro to the CTO of Revolut" not "Any fintech intros welcome". If you can\'t make your asks specific, you\'re not ready for the board meeting. Directors who want to help need a clear brief.' },
+]
+
+const stageTable = [
+  { stage: 'Pre-seed', exec: 'Optional', financials: 'Basic P&L + runway', kpis: '3-4 key metrics', highlights: '2-3 bullets', strategic: '1 item', asks: 'Required' },
+  { stage: 'Seed', exec: '1 page', financials: 'P&L, cash flow, budget vs actual', kpis: '5-6 metrics with MoM', highlights: '3-4 specific wins', strategic: '1-2 items with memos', asks: 'Required, named' },
+  { stage: 'Series A', exec: '1 page (structured)', financials: 'Full financials + cohort data', kpis: '7-8 metrics with trends', highlights: '3-5 with attribution', strategic: '2-3 items', asks: 'Required, specific' },
+  { stage: 'Series B+', exec: '1 page + committee packs', financials: 'Audited quality + projections', kpis: 'Full dashboard', highlights: 'By business unit', strategic: '3+ items', asks: 'Board committee level' },
+]
+
+const badNewsRules = [
+  { rule: 'Lead with the fact, not the context', detail: 'Say "We missed February MRR target by 23%" in the first sentence of the relevant section. Context comes after. Burying bad news under positive framing makes it feel like spin — which it is.' },
+  { rule: 'Show you understand root cause', detail: 'Investors can handle problems. What they can\'t handle is founders who don\'t understand why things went wrong. Distinguish between one-off causes (key customer churn, a bug) and systemic causes (positioning, sales motion). They require different responses.' },
+  { rule: 'Present a remediation plan with a timeline', detail: '"We\'re working on it" is not a plan. "We\'ve moved three enterprise prospects from pipeline to priority close, aiming to recover 60% of the gap by end of March" is a plan. Specific, time-bound, measurable.' },
+  { rule: 'Don\'t catastrophise or minimise', detail: 'Both are trust destroyers. A missed month of MRR isn\'t a company-ending event — treat it as what it is. Equally, "We\'re still on track" when you\'re clearly not on track will be remembered.' },
+]
+
+const faqs = [
+  {
+    q: 'How long should a board report be?',
+    a: 'The core pack: 8-12 pages. Executive summary is one page maximum. Financial statements: 2-3 pages. KPI dashboard: 1 page. Highlights and challenges: 1-2 pages. Strategic memos: 1-2 pages each. Everything else is appendix — available for those who want depth, not required reading. If your board pack is 40 pages, you\'re writing for yourself, not your directors.',
+  },
+  {
+    q: 'What format should the board report be in?',
+    a: 'PDF, sent by email, 48 hours before the meeting. Not a Google Doc link — a PDF ensures everyone reads the same version. Not a presentation deck only — a written pack is more scannable and more likely to actually be read. If your company has a formal board portal, use it, but also send the PDF directly.',
+  },
+  {
+    q: 'Should the board report include projections?',
+    a: 'Yes, from Series A onwards. A 12-month rolling forecast updated monthly, showing current trajectory vs original plan. At seed stage, a 6-month runway projection is sufficient. Pre-seed: just show how long the money lasts at current burn. Never include projections you can\'t explain and defend line by line.',
+  },
+  {
+    q: 'Who writes the board report — the CEO or the CFO?',
+    a: 'The CEO is responsible for it and the executive summary should be in their voice. The CFO or Head of Finance typically prepares the financial section. At early stage where there\'s no CFO, the CEO writes everything — use tools like BoardBrief to shortcut the time cost. The worst outcome is the CEO delegating the whole report and then presenting something they don\'t fully own.',
+  },
+]
 
 export default function BoardReportTemplatePage() {
   return (
     <div className="min-h-screen bg-[#F4F1EB]">
 
-      {/* Nav */}
       <nav className="max-w-[1200px] mx-auto px-6 py-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-[#C8102E]" />
-          <span className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] tracking-tight">
-            DeckBrief
-          </span>
-        </Link>
+          <Link href="/" className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] tracking-tight">
+            BoardBrief
+          </Link>
+        </div>
         <div className="flex items-center gap-6">
-          <Link
-            href="https://deckbrief.com"
-            className="font-[family-name:var(--font-data)] text-sm font-semibold bg-[#1A1A18] text-white px-5 py-2.5 rounded hover:bg-[#C8102E] transition-colors"
-          >
-            Generate your board report
+          <Link href="/auth/login" className="font-[family-name:var(--font-data)] text-sm font-medium text-[#6B6456] hover:text-[#1A1A18] transition-colors">Login</Link>
+          <Link href="/auth/signup" className="font-[family-name:var(--font-data)] text-sm font-semibold bg-[#1A1A18] text-white px-5 py-2.5 rounded hover:bg-[#C8102E] transition-colors">
+            Start free
           </Link>
         </div>
       </nav>
 
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="h-[3px] bg-[#1A1A18] mb-0.5" />
-        <div className="h-px bg-[#1A1A18] mb-12" />
+        <div className="h-px bg-[#1A1A18]" />
       </div>
 
-      {/* Article */}
-      <article className="max-w-[780px] mx-auto px-6 pb-24">
-
-        <p className="kicker mb-5">Board Reporting</p>
-
-        <h1 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '52px', lineHeight: '1.05', fontWeight: 700, letterSpacing: '-0.02em' }}>
-          Board Report Template for Startups: What to Include Every Month
-        </h1>
-
-        <p className="font-[family-name:var(--font-body)] text-lg text-[#6B6456] leading-relaxed mb-12">
-          Most board reports are either too long (nobody reads them) or too thin (the board loses confidence). This template gives you the structure that works at every stage from pre-seed through Series B — with the right sections, the right order, and the right length.
+      <header className="max-w-[768px] mx-auto px-6 pt-16 pb-12">
+        <p className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#C8102E] uppercase tracking-[0.2em] mb-4">
+          Board Report Guide
         </p>
+        <h1 className="font-[family-name:var(--font-heading)] text-4xl md:text-5xl font-bold text-[#1A1A18] leading-tight mb-6">
+          Board Report Template: What to Include at Each Funding Stage
+        </h1>
+        <p className="font-[family-name:var(--font-body)] text-lg text-[#6B6456] leading-relaxed">
+          A board report — or board pack — is your company&rsquo;s most important recurring document. Investors make decisions about follow-on investment, intros, and how much attention to give you based largely on how you show up in these reports. Here&rsquo;s what goes in one, and how that changes as you scale.
+        </p>
+      </header>
 
-        <div className="h-px bg-[#E5E0D5] mb-12" />
+      <main className="max-w-[768px] mx-auto px-6 pb-24">
 
-        {/* Section 1 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            The Executive Summary (Slide 1)
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            What should a board report include?
           </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Start with a single slide or half-page summary that anyone can read in 90 seconds. Board members often skim before the meeting — this is what they read first. Write it last.
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <p className="font-[family-name:var(--font-body)] text-[#6B6456] leading-relaxed mb-8">
+            A complete board report has seven sections. Each exists for a specific reason — not convention. Understanding why each section exists helps you write it correctly.
           </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            The executive summary should answer three questions: where are we now, what changed since last report, and what do we need from you today. Keep it to five to seven bullet points. Lead with your most important number — usually MRR or ARR — and the change since last period.
-          </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed">
-            If you are not comfortable writing this summary, you do not yet know what to say at the board meeting. Clarify that first.
-          </p>
-        </section>
-
-        {/* Section 2 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            Key Metrics Section (Slides 2–4)
-          </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-6">
-            Show the numbers every board member expects. Present each metric with current value, prior period, and trend (MoM or YoY). Use a simple table or metric grid — not a deck full of charts.
-          </p>
-
-          <h3 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-3" style={{ fontSize: '22px', lineHeight: '1.3', fontWeight: 700 }}>
-            Revenue Metrics
-          </h3>
-          <ul className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-6 space-y-2 pl-5 list-disc">
-            <li><strong>MRR</strong> (Monthly Recurring Revenue) — your baseline. Show absolute number and MoM growth %.</li>
-            <li><strong>ARR</strong> (Annual Recurring Revenue) — MRR × 12. VCs think in ARR even if your contracts are monthly.</li>
-            <li><strong>New MRR, Expansion MRR, Churned MRR</strong> — the waterfall. Shows whether you are filling a leaky bucket.</li>
-          </ul>
-
-          <h3 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-3" style={{ fontSize: '22px', lineHeight: '1.3', fontWeight: 700 }}>
-            Cash & Efficiency
-          </h3>
-          <ul className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-6 space-y-2 pl-5 list-disc">
-            <li><strong>Burn rate</strong> — net cash out per month. Investors notice if this number is missing.</li>
-            <li><strong>Runway</strong> — cash in bank divided by net burn. Express in months. Flag if under 12 months.</li>
-            <li><strong>Gross margin</strong> — critical once you pass $1M ARR. Shows unit economics.</li>
-          </ul>
-
-          <h3 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-3" style={{ fontSize: '22px', lineHeight: '1.3', fontWeight: 700 }}>
-            Headcount
-          </h3>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed">
-            Total headcount by department (Engineering, Sales, Customer Success, G&A). Show prior period for comparison. Include open roles if you are actively hiring. This is one of the most-read tables in any board report.
-          </p>
-        </section>
-
-        {/* Section 3 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            Highlights & Lowlights (Slide 5)
-          </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            This is the section most founders get wrong. They fill highlights with good news and bury bad news or omit it entirely. Board members are pattern-matched to spot this — and it destroys trust faster than the bad news itself.
-          </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Use a simple two-column layout: three to five highlights on the left, two to three lowlights on the right. For lowlights, always include what you are doing about it. A lowlight without a plan looks like a surrender.
-          </p>
-          <div className="bg-white border border-[#E5E0D5] rounded p-6 mb-4">
-            <p className="font-[family-name:var(--font-data)] text-xs font-bold text-[#C8102E] uppercase tracking-widest mb-3">Example lowlight</p>
-            <p className="font-[family-name:var(--font-body)] text-sm text-[#1A1A18] leading-relaxed italic">
-              "Churn increased to 3.2% MoM (from 1.8%). Root cause: two enterprise customers cancelled due to missing integrations (Salesforce, HubSpot). Both cited same gap. Response: engineering has scoped both integrations, targeting release in Q3. Pipeline impact: three similar deals in negotiation paused pending this release."
-            </p>
-          </div>
-          <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">
-            That format — observation, root cause, response, downstream impact — is what good lowlights look like.
-          </p>
-        </section>
-
-        {/* Section 4 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            Asks from the Board (Slide 6)
-          </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Board members want to help. They just need you to tell them how. This section is chronically underused by founders — either because they feel like asking shows weakness, or because they have not thought through what they actually need.
-          </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Be specific. "Looking for intros" is not an ask. "Need a warm intro to the VP of Data at Stripe — we are targeting fintech enterprise, this is a strategic pilot that could anchor the vertical" is an ask.
-          </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed">
-            Keep this to three asks maximum. Prioritise. If you have ten asks, you get zero responses. Three focused asks get followed up on.
-          </p>
-        </section>
-
-        {/* Section 5 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            Appendix Structure (Slides 7–10)
-          </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Appendix material is for board members who want to go deep. Not everyone will. Include it, but do not present it during the meeting unless asked.
-          </p>
-          <ul className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed space-y-2 pl-5 list-disc">
-            <li>P&L summary — income statement, balance sheet highlights</li>
-            <li>Pipeline detail — top 10 deals by value, stage, expected close</li>
-            <li>Product roadmap — current quarter milestones, next quarter preview</li>
-            <li>Team updates — key hires, departures, org chart changes</li>
-          </ul>
-        </section>
-
-        {/* Section 6 */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '36px', lineHeight: '1.15', fontWeight: 700 }}>
-            Length Recommendation
-          </h2>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed mb-4">
-            Target 10–12 slides for the main deck, plus an appendix of 3–5 slides if needed. Any longer and board members start skimming the slides you actually need them to read.
-          </p>
-          <p className="font-[family-name:var(--font-body)] text-base text-[#1A1A18] leading-relaxed">
-            Send the board report 48 hours before the meeting. A report sent the night before is not read — it is glanced at. Board members prepare questions based on what they read in advance. Give them time.
-          </p>
-        </section>
-
-        {/* Internal links */}
-        <section className="mb-14">
-          <h2 className="font-[family-name:var(--font-heading)] text-[#1A1A18] mb-6" style={{ fontSize: '28px', lineHeight: '1.2', fontWeight: 700 }}>
-            Related Guides
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { href: '/guides/investor-update-email', label: 'Investor Update Email Template', desc: 'The email format VCs actually read' },
-              { href: '/guides/board-meeting-agenda', label: 'Board Meeting Agenda Template', desc: 'Time-allocated agenda with discussion framework' },
-              { href: '/guides/startup-kpis', label: 'The 12 KPIs Every Board Expects', desc: 'Metrics framework from pre-seed to Series B' },
-            ].map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block bg-white border border-[#E5E0D5] rounded p-5 hover:border-[#1A1A18] transition-colors"
-              >
-                <p className="font-[family-name:var(--font-heading)] text-sm font-bold text-[#1A1A18] mb-1">{link.label}</p>
-                <p className="font-[family-name:var(--font-data)] text-xs text-[#6B6456]">{link.desc}</p>
-              </Link>
+          <div className="space-y-0">
+            {sections.map((s, i) => (
+              <div key={s.num} className={`border-t border-[#E5E0D5] py-6 ${i === sections.length - 1 ? 'border-b' : ''}`}>
+                <div className="flex items-start gap-6">
+                  <span className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#C8102E] uppercase tracking-widest shrink-0 pt-1">{s.num}</span>
+                  <div>
+                    <h3 className="font-[family-name:var(--font-heading)] text-lg font-bold text-[#1A1A18] mb-2">{s.title}</h3>
+                    <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">{s.purpose}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* CTA */}
-        <div className="bg-[#1A1A18] rounded p-12 text-center">
-          <p className="kicker text-[#C8102E] mb-4">Skip the template</p>
-          <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-white mb-4 leading-tight">
-            Generate your board report in 60 seconds
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            Board report format by stage
           </h2>
-          <p className="font-[family-name:var(--font-body)] text-white/60 mb-8 max-w-[420px] mx-auto leading-relaxed">
-            Paste your metrics into DeckBrief and get a Sequoia-style board report — formatted, structured, and ready to send.
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <p className="font-[family-name:var(--font-body)] text-[#6B6456] leading-relaxed mb-8">
+            The report evolves as your company matures and your board becomes more sophisticated. Here&rsquo;s what&rsquo;s appropriate at each stage.
           </p>
-          <a
-            href="https://deckbrief.com"
-            className="font-[family-name:var(--font-data)] inline-flex items-center gap-2 bg-[#C8102E] text-white px-8 py-4 rounded font-semibold hover:bg-[#A00E26] transition-colors text-sm"
+          <div className="bg-white border border-[#E5E0D5] rounded overflow-x-auto">
+            <table className="w-full font-[family-name:var(--font-data)] text-sm">
+              <thead>
+                <tr className="bg-[#F4F1EB] border-b border-[#E5E0D5]">
+                  <th className="text-left px-4 py-3 text-[10px] font-bold text-[#6B6456] uppercase tracking-widest">Stage</th>
+                  <th className="text-left px-4 py-3 text-[10px] font-bold text-[#6B6456] uppercase tracking-widest">Exec Summary</th>
+                  <th className="text-left px-4 py-3 text-[10px] font-bold text-[#6B6456] uppercase tracking-widest">Financials</th>
+                  <th className="text-left px-4 py-3 text-[10px] font-bold text-[#6B6456] uppercase tracking-widest">KPIs</th>
+                  <th className="text-left px-4 py-3 text-[10px] font-bold text-[#6B6456] uppercase tracking-widest">Strategic</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stageTable.map((row, i) => (
+                  <tr key={row.stage} className={i > 0 ? 'border-t border-[#E5E0D5]' : ''}>
+                    <td className="px-4 py-3 font-semibold text-[#1A1A18]">{row.stage}</td>
+                    <td className="px-4 py-3 text-[#6B6456]">{row.exec}</td>
+                    <td className="px-4 py-3 text-[#6B6456]">{row.financials}</td>
+                    <td className="px-4 py-3 text-[#6B6456]">{row.kpis}</td>
+                    <td className="px-4 py-3 text-[#6B6456]">{row.strategic}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            The executive summary — the page they actually read
+          </h2>
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <p className="font-[family-name:var(--font-body)] text-[#6B6456] leading-relaxed mb-6">
+            A VC with a portfolio of 15 companies reads a lot of board packs. The executive summary is what they read first, sometimes exclusively. It needs to do three things: establish context, deliver the most important metric or development, and flag the key decision or question for the meeting.
+          </p>
+          <div className="bg-[#1A1A18] rounded p-6 mb-6">
+            <p className="font-[family-name:var(--font-data)] text-[9px] font-bold text-[#C8102E] uppercase tracking-widest mb-3">Structure that works</p>
+            <div className="space-y-3">
+              {[
+                { label: 'Sentence 1', text: 'One sentence of context — where are we in the plan, what period is this.' },
+                { label: 'Sentence 2-3', text: 'The headline. The single most important thing that happened — good or bad. Lead with the number.' },
+                { label: 'Sentence 4-5', text: 'What it means. Is this confirmation of a trend, an anomaly, a turning point?' },
+                { label: 'Sentence 6', text: 'What you need from the board. The question or decision this sets up.' },
+              ].map(s => (
+                <div key={s.label} className="flex gap-4">
+                  <span className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#C8102E] uppercase tracking-wider shrink-0 pt-0.5 w-20">{s.label}</span>
+                  <p className="font-[family-name:var(--font-body)] text-white/70 text-sm leading-relaxed">{s.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">
+            The executive summary should be written last. You don&rsquo;t know what the most important thing is until you&rsquo;ve finished the rest of the pack. Founders who write it first tend to lead with aspiration rather than reality.
+          </p>
+        </section>
+
+        <div className="bg-[#1A1A18] rounded p-8 mb-16">
+          <p className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#C8102E] uppercase tracking-widest mb-3">BoardBrief</p>
+          <p className="font-[family-name:var(--font-heading)] text-xl font-bold text-white mb-3 leading-tight">
+            Your board pack, generated from metrics in 60 seconds
+          </p>
+          <p className="font-[family-name:var(--font-body)] text-white/70 text-sm leading-relaxed mb-6">
+            DeckBrief generates a professional board report automatically from your metrics. Executive summary, KPI grid, highlights, challenges, asks — formatted in broadsheet style, ready to send.
+          </p>
+          <Link
+            href="/auth/signup"
+            className="font-[family-name:var(--font-data)] inline-flex items-center gap-2 bg-[#C8102E] text-white px-6 py-3 rounded text-sm font-semibold hover:bg-[#A00E26] transition-colors"
           >
-            Try DeckBrief free
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </a>
+            Generate Your Board Report Free →
+          </Link>
         </div>
 
-      </article>
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            Financial statements for board reports
+          </h2>
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <p className="font-[family-name:var(--font-body)] text-[#6B6456] leading-relaxed mb-6">
+            Most early-stage founders include a P&L. Most experienced investors also want to see cash flow and a balance sheet from Series A onwards. Here&rsquo;s what to include and how to format it.
+          </p>
+          <div className="bg-white border border-[#E5E0D5] rounded overflow-hidden">
+            {[
+              { title: 'P&L (Income Statement)', desc: 'Current month vs prior month vs budget. YTD vs YTD budget. Include gross margin as a line — not just revenue and EBITDA. If you\'re burning, show the burn clearly. Investors who can\'t find the burn line in your P&L become suspicious.' },
+              { title: 'Cash flow statement', desc: 'Operating, investing, financing. More important than the P&L at early stage because it shows the actual movement of money. Reconcile to the opening and closing cash balance on your balance sheet.' },
+              { title: 'Balance sheet', desc: 'Required from Series A. Deferred revenue, accounts receivable, and payables matter more than founders realise. An unexpected receivables spike often signals a revenue recognition problem worth flagging proactively.' },
+              { title: 'Runway projection', desc: 'How long does the money last at current burn rate? At projected burn rate (if you\'re planning to hire)? Show both. Investors run this calculation anyway — give them your version with your assumptions.' },
+            ].map((item, i) => (
+              <div key={item.title} className={`px-6 py-5 ${i > 0 ? 'border-t border-[#E5E0D5]' : ''}`}>
+                <p className="font-[family-name:var(--font-data)] text-sm font-semibold text-[#1A1A18] mb-1">{item.title}</p>
+                <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      {/* Footer */}
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            How to present bad news in a board report
+          </h2>
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <p className="font-[family-name:var(--font-body)] text-[#6B6456] leading-relaxed mb-8">
+            This is where founder credibility is built or destroyed. Not in the good months — in the bad ones. Four rules that experienced founders follow:
+          </p>
+          <div className="space-y-6">
+            {badNewsRules.map((r) => (
+              <div key={r.rule} className="border-l-2 border-[#C8102E] pl-5">
+                <p className="font-[family-name:var(--font-data)] text-sm font-semibold text-[#1A1A18] mb-1">{r.rule}</p>
+                <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">{r.detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            Board report vs investor update — what&rsquo;s the difference?
+          </h2>
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <div className="grid grid-cols-2 gap-0 bg-white border border-[#E5E0D5] rounded overflow-hidden">
+            {[
+              { label: 'Board report / Board pack', items: ['Formal governance document', 'Sent to directors + observers only', 'Accompanies a scheduled board meeting', 'Minutes are kept', 'Includes decisions to be made', 'Series A+ companies: quarterly minimum'] },
+              { label: 'Investor update email', items: ['Informal communication', 'Sent to all investors (including non-directors)', 'No meeting required', 'No minutes', 'Informational — not decision-making', 'Best practice: monthly at all stages'] },
+            ].map((col, i) => (
+              <div key={col.label} className={`p-6 ${i > 0 ? 'border-l border-[#E5E0D5]' : ''}`}>
+                <p className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#1A1A18] uppercase tracking-widest mb-4">{col.label}</p>
+                <ul className="space-y-2">
+                  {col.items.map(item => (
+                    <li key={item} className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] flex items-start gap-2">
+                      <span className="text-[#C8102E] shrink-0 mt-0.5">—</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl font-bold text-[#1A1A18] mb-2">
+            Frequently asked questions
+          </h2>
+          <div className="h-0.5 w-12 bg-[#C8102E] mb-8" />
+          <div className="space-y-0">
+            {faqs.map((faq, i) => (
+              <div key={faq.q} className={`border-t border-[#E5E0D5] py-6 ${i === faqs.length - 1 ? 'border-b' : ''}`}>
+                <h3 className="font-[family-name:var(--font-heading)] text-base font-bold text-[#1A1A18] mb-3">{faq.q}</h3>
+                <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div className="border border-[#C8102E] rounded p-8">
+          <p className="font-[family-name:var(--font-data)] text-[10px] font-bold text-[#C8102E] uppercase tracking-widest mb-3">Skip the blank page</p>
+          <p className="font-[family-name:var(--font-heading)] text-xl font-bold text-[#1A1A18] mb-3 leading-tight">
+            Board report done in 60 seconds
+          </p>
+          <p className="font-[family-name:var(--font-body)] text-sm text-[#6B6456] leading-relaxed mb-6">
+            Paste your metrics. BoardBrief writes the executive summary, formats the KPI grid, and exports a PDF your directors will actually read.
+          </p>
+          <Link
+            href="/auth/signup"
+            className="font-[family-name:var(--font-data)] inline-flex items-center gap-2 bg-[#C8102E] text-white px-6 py-3 rounded text-sm font-semibold hover:bg-[#A00E26] transition-colors"
+          >
+            Generate Your Board Report Free →
+          </Link>
+        </div>
+
+      </main>
+
       <footer className="max-w-[1200px] mx-auto px-6 py-12">
         <div className="h-[2px] bg-[#1A1A18] mb-0.5" />
         <div className="h-px bg-[#1A1A18] mb-8" />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-0.5 h-4 bg-[#C8102E]" />
-            <span className="font-[family-name:var(--font-heading)] text-lg font-bold text-[#6B6456]">DeckBrief</span>
+            <span className="font-[family-name:var(--font-heading)] text-lg font-bold text-[#6B6456]">BoardBrief</span>
           </div>
           <div className="flex items-center gap-6 font-[family-name:var(--font-data)] text-sm text-[#6B6456]">
-            <Link href="/" className="hover:text-[#1A1A18] transition-colors">Home</Link>
+            <Link href="/auth/login" className="hover:text-[#1A1A18] transition-colors">Login</Link>
             <Link href="/privacy" className="hover:text-[#1A1A18] transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-[#1A1A18] transition-colors">Terms</Link>
           </div>
