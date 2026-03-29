@@ -10,5 +10,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/guides/investor-update-email`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/guides/board-meeting-agenda`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/guides/startup-kpis`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/fundraising-deck-guide`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/series-a-readiness-guide`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/financial-model-for-startups`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/cap-table-for-board-meetings`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ]
 }
