@@ -15,5 +15,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/guides/series-a-readiness-guide`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/guides/financial-model-for-startups`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/guides/cap-table-for-board-meetings`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/guides/quarterly-board-report-template`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/saas-metrics-dashboard`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/mrr-growth-calculation`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/investor-update-email-template`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/board-meeting-minutes-template`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/startup-financial-reporting`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/runway-calculator`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/guides/burn-rate-analysis`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
   ]
 }
